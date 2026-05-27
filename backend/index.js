@@ -19,9 +19,11 @@ app.use(express.json());
 
 const vagasRoutes = require('./routes/vagas');
 const dashboardRoutes = require('./routes/dashboard');
+const authRoutes = require('./routes/auth');
 
 app.use('/api/vagas', vagasRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/auth', authRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend is running!' });

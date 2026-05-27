@@ -1,167 +1,290 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Briefcase, ArrowRight, Mail } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const GithubIcon = ({ className }) => (
-  <svg className={className} fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-    <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
-  </svg>
-);
-
-function AuthScreen() {
+export default function AuthScreen() {
+  const location = useLocation();
   const [isLogin, setIsLogin] = useState(true);
+  
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get('tab') === 'register') {
+      setIsLogin(false);
+    }
+  }, [location.search]);
+
+  const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [senha, setSenha] = useState('');
+  const [tipo, setTipo] = useState('jovem');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email && password) {
-      navigate('/dashboard');
+    setErro('');
+    setLoading(true);
+    try {
+      if (isLogin) {
+        const res = await axios.post('http://localhost:5000/api/auth/login', { email, senha });
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+        navigate('/dashboard');
+      } else {
+        const res = await axios.post('http://localhost:5000/api/auth/register', { nome, email, senha, tipo });
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      setErro(err.response?.data?.error || 'Ocorreu um erro. Tenta novamente.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
-    <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background gradients */}
-      <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none"></div>
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[100px] pointer-events-none"></div>
-      
-      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex justify-center"
+  const formContent = (
+    <div className="relative z-10 flex flex-col gap-8">
+      <div className="flex bg-surface-container-highest/50 p-1 rounded-xl relative overflow-hidden border border-outline-variant/20">
+        <motion.div
+          className="absolute top-1 bottom-1 w-[calc(50%-4px)] bg-surface rounded-lg border border-outline-variant/30 shadow-sm"
+          initial={false}
+          animate={{ x: isLogin ? 4 : '100%' }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        />
+        <button
+          type="button"
+          onClick={() => { setIsLogin(true); setErro(''); }}
+          className={`flex-1 py-2 text-sm font-bold z-10 transition-colors ${isLogin ? 'text-primary' : 'text-on-surface-variant'}`}
         >
-          <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shadow-lg backdrop-blur-md">
-            <Briefcase className="w-6 h-6 text-primary" />
-          </div>
-        </motion.div>
-        <motion.h2 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="mt-6 text-center text-3xl font-extrabold text-white tracking-tight"
+          Login
+        </button>
+        <button
+          type="button"
+          onClick={() => { setIsLogin(false); setErro(''); }}
+          className={`flex-1 py-2 text-sm font-bold z-10 transition-colors ${!isLogin ? 'text-primary' : 'text-on-surface-variant'}`}
         >
-          {isLogin ? 'Bem-vindo de volta' : 'Crie sua conta'}
-        </motion.h2>
-        <motion.p 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="mt-2 text-center text-sm text-slate-400"
-        >
-          {isLogin ? 'Entre para acessar o portal corporativo' : 'Junte-se a milhares de empresas e talentos'}
-        </motion.p>
+          Registo
+        </button>
       </div>
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10"
+      <div className="text-center">
+        <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6 text-primary">
+          <span className="material-symbols-outlined text-[32px]">{isLogin ? 'lock' : 'person_add'}</span>
+        </div>
+        <h1 className="text-3xl font-bold text-on-surface tracking-tight">{isLogin ? 'Bem-vindo de volta' : 'Criar Conta'}</h1>
+        <p className="text-on-surface-variant mt-2 text-sm">{isLogin ? 'Acede ao teu painel de talentos ou recrutamento.' : 'Começa a tua jornada no ecossistema premium.'}</p>
+      </div>
+
+      {erro && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          className="bg-error-container/50 border border-error/20 text-on-error-container p-3 rounded-lg text-sm text-center"
+        >
+          {erro}
+        </motion.div>
+      )}
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <AnimatePresence mode="popLayout">
+          {!isLogin && (
+            <motion.div
+              key="signup-fields"
+              initial={{ opacity: 0, height: 0, y: -20 }}
+              animate={{ opacity: 1, height: 'auto', y: 0 }}
+              exit={{ opacity: 0, height: 0, y: -20 }}
+              className="flex flex-col gap-4 overflow-hidden"
+            >
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-on-surface">O que procuras?</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setTipo('jovem')}
+                    className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 transition-all ${tipo === 'jovem' ? 'bg-primary/10 border-primary text-primary' : 'bg-surface border-outline-variant text-on-surface-variant hover:border-primary/50'}`}
+                  >
+                    <span className="material-symbols-outlined text-[20px]">person</span>
+                    <span className="font-bold text-sm">Sou Talento</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTipo('empresa')}
+                    className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 transition-all ${tipo === 'empresa' ? 'bg-primary/10 border-primary text-primary' : 'bg-surface border-outline-variant text-on-surface-variant hover:border-primary/50'}`}
+                  >
+                    <span className="material-symbols-outlined text-[20px]">domain</span>
+                    <span className="font-bold text-sm">Recrutador</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-on-surface">Nome Completo</label>
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">badge</span>
+                  <input
+                    type="text"
+                    required={!isLogin}
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
+                    className="w-full bg-surface border border-outline-variant rounded-xl py-3 pl-12 pr-4 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all placeholder:text-outline-variant"
+                    placeholder="O teu Nome"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-bold text-on-surface">{isLogin ? 'Email' : 'Email Profissional'}</label>
+          <div className="relative">
+            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">mail</span>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-surface border border-outline-variant rounded-xl py-3 pl-12 pr-4 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all placeholder:text-outline-variant"
+              placeholder={isLogin ? "nome@exemplo.com" : "exemplo@empresa.com"}
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-between items-center">
+            <label className="text-sm font-bold text-on-surface">Palavra-passe</label>
+            {isLogin && <a href="#" className="text-xs text-primary hover:underline">Esqueceste a passe?</a>}
+          </div>
+          <div className="relative">
+            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">{isLogin ? 'key' : 'lock_reset'}</span>
+            <input
+              type={showPassword ? "text" : "password"}
+              required
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              className="w-full bg-surface border border-outline-variant rounded-xl py-3 pl-12 pr-12 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all placeholder:text-outline-variant"
+              placeholder={isLogin ? "••••••••" : "Mínimo 8 caracteres"}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors focus:outline-none"
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                {showPassword ? 'visibility_off' : 'visibility'}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className={`font-bold text-sm px-6 py-3.5 rounded-xl hover:scale-[1.02] duration-200 transition-all w-full mt-4 flex items-center justify-center gap-2 ${isLogin ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-on-surface text-surface shadow-lg'} disabled:opacity-50 disabled:hover:scale-100`}
+        >
+          {loading ? 'A processar...' : isLogin ? 'Entrar' : 'Criar Minha Conta'}
+          {!loading && <span className="material-symbols-outlined text-[18px]">arrow_forward</span>}
+        </button>
+      </form>
+    </div>
+  );
+
+  return (
+    <div className="bg-background min-h-screen flex items-center justify-center p-4 md:p-8 text-on-surface relative overflow-hidden">
+      {/* Back button */}
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="absolute top-8 left-8 z-50"
       >
-        <div className="relative group">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-accent-purple rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
-          <div className="relative bg-slate-900 border border-slate-800 py-8 px-4 shadow-2xl sm:rounded-2xl sm:px-10">
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              
-              {!isLogin && (
-                <div>
-                  <label className="block text-sm font-medium text-slate-300">Nome Completo</label>
-                  <div className="mt-1">
-                    <input 
-                      type="text" 
-                      className="appearance-none block w-full px-4 py-3 border border-slate-700 rounded-xl bg-slate-800/50 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                      placeholder="Seu nome"
-                    />
-                  </div>
-                </div>
-              )}
+        <Link to="/" className="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 font-bold text-sm">
+          <span className="material-symbols-outlined">arrow_back</span>
+          Voltar
+        </Link>
+      </motion.div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-300">E-mail</label>
-                <div className="mt-1">
-                  <input 
-                    type="email" 
-                    required 
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    className="appearance-none block w-full px-4 py-3 border border-slate-700 rounded-xl bg-slate-800/50 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                    placeholder="voce@empresa.com"
-                  />
-                </div>
+      {/* Decorative background blobs */}
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-fixed opacity-30 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-secondary-fixed opacity-20 blur-[120px] pointer-events-none" />
+
+      <motion.div
+        layout
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: "spring", stiffness: 80, damping: 20 }}
+        className="w-full max-w-5xl min-h-screen md:min-h-[600px] md:rounded-[40px] flex flex-col md:flex-row overflow-y-auto overflow-x-hidden md:border md:border-outline-variant/30 md:shadow-2xl relative bg-surface-container-lowest md:bg-surface-container-lowest z-10"
+      >
+        {/* Desktop: Left Brand Panel */}
+        <div className="hidden md:flex md:w-1/2 relative bg-surface items-center justify-center p-12 border-r border-outline-variant/30">
+          <div className="absolute inset-0 bg-linear-to-br from-surface via-surface to-primary/5"></div>
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-4 mb-10">
+              <div className="w-16 h-16 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+                <span className="material-symbols-outlined text-white text-[32px]">rocket_launch</span>
               </div>
-
-              <div>
-                <div className="flex items-center justify-between">
-                  <label className="block text-sm font-medium text-slate-300">Senha</label>
-                  {isLogin && (
-                    <div className="text-sm">
-                      <a href="#" className="font-medium text-primary hover:text-primary-hover transition-colors">
-                        Esqueceu a senha?
-                      </a>
-                    </div>
-                  )}
-                </div>
-                <div className="mt-1">
-                  <input 
-                    type="password" 
-                    required 
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    className="appearance-none block w-full px-4 py-3 border border-slate-700 rounded-xl bg-slate-800/50 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                    placeholder="••••••••"
-                  />
-                </div>
+              <div className="flex flex-col">
+                <span className="text-4xl font-bold text-primary tracking-tight leading-none">JovemTech</span>
+                <span className="text-xs text-on-surface-variant tracking-[0.2em] mt-2 font-bold">TALENTOS ANGOLANOS</span>
               </div>
-
-              <div>
-                <button type="submit" className="w-full flex justify-center items-center py-3.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:ring-offset-slate-900 transition-all group">
-                  {isLogin ? 'Entrar' : 'Registrar'}
-                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
+            </div>
+            
+            <p className="text-on-surface-variant text-lg leading-relaxed mb-10">
+              O ecossistema premium que conecta jovens talentos às melhores empresas de tecnologia em Angola. Acelera a tua carreira connosco.
+            </p>
+            
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-primary text-[20px]">verified</span>
+                <span className="text-on-surface text-sm font-medium">Oportunidades exclusivas</span>
               </div>
-            </form>
-
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-700" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-slate-900 text-slate-500">Ou continue com</span>
-                </div>
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-primary text-[20px]">rocket_launch</span>
+                <span className="text-on-surface text-sm font-medium">Impulsiona o teu perfil</span>
               </div>
-
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <button className="w-full inline-flex justify-center items-center py-2.5 px-4 border border-slate-700 rounded-xl bg-slate-800/50 text-sm font-medium text-slate-300 hover:bg-slate-700 transition-colors">
-                  <GithubIcon className="w-5 h-5" />
-                </button>
-                <button className="w-full inline-flex justify-center items-center py-2.5 px-4 border border-slate-700 rounded-xl bg-slate-800/50 text-sm font-medium text-slate-300 hover:bg-slate-700 transition-colors">
-                  <Mail className="w-5 h-5" />
-                </button>
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-primary text-[20px]">handshake</span>
+                <span className="text-on-surface text-sm font-medium">Conexão direta com recrutadores</span>
               </div>
             </div>
 
-            <div className="mt-6 text-center">
-              <p className="text-sm text-slate-400">
-                {isLogin ? 'Não tem uma conta?' : 'Já tem uma conta?'}
-                <button 
-                  onClick={() => setIsLogin(!isLogin)}
-                  className="ml-2 font-medium text-primary hover:text-primary-hover transition-colors"
-                >
-                  {isLogin ? 'Criar agora' : 'Fazer login'}
-                </button>
+            {/* Testemunho minimalista */}
+            <div className="mt-12 p-6 rounded-2xl bg-surface-container-highest/50 border border-outline-variant/20 relative">
+              <span className="material-symbols-outlined absolute top-4 right-4 text-primary/20 text-[40px] pointer-events-none" style={{ fontVariationSettings: "'FILL' 1" }}>format_quote</span>
+              <p className="text-sm text-on-surface italic relative z-10 mb-4">
+                "A JovemTech mudou a forma como contrato talentos. Encontrei o meu lead developer em menos de uma semana!"
               </p>
+              <div className="flex items-center gap-3">
+                <img className="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCq21Ogn5SAvo8PiSN3ITFhbaoKy7VoGe_hEYsL8pKkD9BPo5BKpnUscepDzZWwRmXV8a2cTLmosVhbHEMjOVRv93J638gThklbdGHAZ3_rdPITPSuGvcWDRkVzxRjanc3QUmbJGREJvw3jz6PqMkmo7otMR_N53ZlUErEiRBeDud6ec92IBHsz1FGahsK6lrN5g7V_GUbXUF5IE5LZIZYaEZoLdDhHP_PcL84P36-yX1Ix1iUw2TfRu_xbRuwNiQWHt670wjmiHK8" alt="Mariana S." />
+                <div>
+                  <p className="text-xs font-bold text-on-surface">Mariana Silva</p>
+                  <p className="text-[10px] text-on-surface-variant">Tech Recruiter @ Innovate</p>
+                </div>
+              </div>
             </div>
+          </div>
+        </div>
+
+        {/* Mobile: Top Header */}
+        <div className="md:hidden flex flex-col items-center justify-center p-8 pt-20 relative overflow-hidden bg-surface">
+          <div className="w-14 h-14 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 mb-4 relative z-10">
+            <span className="material-symbols-outlined text-white text-[28px]">rocket_launch</span>
+          </div>
+          <span className="text-3xl font-bold text-primary tracking-tight relative z-10">JovemTech</span>
+          <span className="text-[10px] text-on-surface-variant tracking-[0.3em] mt-2 relative z-10 uppercase font-bold">Talentos Angolanos</span>
+        </div>
+
+        {/* Right Form Panel */}
+        <div className="w-full md:w-1/2 flex items-center justify-center p-6 md:p-12 relative bg-surface-container-lowest">
+          <div className="w-full max-w-md relative z-10">
+            {formContent}
           </div>
         </div>
       </motion.div>
     </div>
   );
 }
-
-export default AuthScreen;

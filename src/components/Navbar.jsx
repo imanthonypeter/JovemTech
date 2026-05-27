@@ -1,69 +1,82 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { cn } from '../lib/utils';
-import { Briefcase } from 'lucide-react';
 
 function Navbar() {
   const location = useLocation();
-  const isDarkBg = location.pathname === '/'; // Landing page has dark background
+  const navigate = useNavigate();
+  
+  const token = localStorage.getItem('token');
+  const userStr = localStorage.getItem('user');
+  let user = null;
+  try {
+    user = userStr ? JSON.parse(userStr) : null;
+  } catch(e) {}
 
   return (
-    <motion.nav 
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4"
-    >
-      <div className={cn(
-        "glass-pill rounded-full px-6 py-3 flex items-center justify-between w-full max-w-4xl transition-all duration-500",
-        isDarkBg ? "" : "bg-white/80 border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl"
-      )}>
-        <Link 
-          to="/" 
-          className={cn(
-            "font-extrabold text-xl tracking-tight flex items-center gap-2",
-            isDarkBg ? "text-white" : "text-slate-900"
-          )}
-        >
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-            <Briefcase className="w-4 h-4 text-white" />
-          </div>
-          JovemTech
-        </Link>
-        
-        <div className="hidden md:flex items-center space-x-1">
-          <NavLink to="/dashboard" active={location.pathname === '/dashboard'} isDark={isDarkBg}>Dashboard</NavLink>
-          <NavLink to="/vagas" active={location.pathname === '/vagas'} isDark={isDarkBg}>Vagas</NavLink>
-          <Link 
-            to="/nova-vaga" 
-            className={cn(
-              "ml-4 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300",
-              isDarkBg 
-                ? "bg-white text-background hover:bg-slate-200 shadow-lg shadow-white/10" 
-                : "bg-slate-900 text-white hover:bg-slate-800 shadow-md hover:shadow-lg"
-            )}
-          >
-            Nova Vaga
+    <header className="bg-surface/80 backdrop-blur-md fixed top-0 w-full z-50 border-b border-outline-variant/30 shadow-sm">
+      <div className="flex justify-between items-center px-gutter h-16 max-w-container-max mx-auto">
+        <div className="flex items-center gap-md">
+          <Link to="/" className="flex items-center gap-md cursor-pointer">
+            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-primary/20">
+              <span className="material-symbols-outlined text-white text-[20px]">rocket_launch</span>
+            </div>
+            <span className="font-headline-md text-headline-md font-bold text-primary tracking-tight">JovemTech</span>
           </Link>
+          
+          <div className="ml-xl hidden md:flex items-center gap-lg h-full pt-1">
+            <Link className={`font-body-md text-body-md transition-all duration-200 px-sm h-full flex items-center ${location.pathname === '/sobre' ? 'text-primary border-b-2 border-primary pb-1' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 rounded-md'}`} to="/sobre">Sobre Nós</Link>
+            <Link className={`font-body-md text-body-md transition-all duration-200 px-sm h-full flex items-center ${location.pathname === '/contactos' ? 'text-primary border-b-2 border-primary pb-1' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 rounded-md'}`} to="/contactos">Contactos</Link>
+            <Link className={`font-body-md text-body-md transition-all duration-200 px-sm h-full flex items-center ${location.pathname === '/comunidade' ? 'text-primary border-b-2 border-primary pb-1' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 rounded-md'}`} to="/comunidade">Comunidade</Link>
+            <Link className={`font-body-md text-body-md transition-all duration-200 px-sm h-full flex items-center ${location.pathname === '/faq' ? 'text-primary border-b-2 border-primary pb-1' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 rounded-md'}`} to="/faq">FAQ</Link>
+            {token && (
+              <>
+                <Link className={`font-body-md text-body-md transition-all duration-200 px-sm h-full flex items-center ${location.pathname === '/dashboard' ? 'text-primary border-b-2 border-primary pb-1' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 rounded-md'}`} to="/dashboard">Dashboard</Link>
+                <Link className={`font-body-md text-body-md transition-all duration-200 px-sm h-full flex items-center ${location.pathname === '/vagas' ? 'text-primary border-b-2 border-primary pb-1' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 rounded-md'}`} to="/vagas">Vagas</Link>
+              </>
+            )}
+            {user?.tipo === 'empresa' && (
+              <Link className={`font-body-md text-body-md transition-all duration-200 px-sm py-xs rounded-md h-full flex items-center text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50`} to="/nova-vaga">Nova Vaga</Link>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-md">
+          {token ? (
+            <>
+              <button aria-label="notifications" className="text-on-surface-variant hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container-low">
+                <span className="material-symbols-outlined">notifications</span>
+              </button>
+              <button aria-label="chat" className="text-on-surface-variant hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container-low">
+                <span className="material-symbols-outlined">chat_bubble</span>
+              </button>
+              <button aria-label="settings" className="text-on-surface-variant hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container-low">
+                <span className="material-symbols-outlined">settings</span>
+              </button>
+              <div 
+                className="w-8 h-8 rounded-full overflow-hidden border border-outline-variant cursor-pointer hover:border-primary transition-colors bg-primary flex items-center justify-center"
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('user');
+                  navigate('/auth');
+                }}
+                title="Sair"
+              >
+                <span className="material-symbols-outlined text-white text-[18px]">logout</span>
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center gap-sm">
+              <Link to="/auth" className="font-label-md text-label-md text-primary hover:bg-surface-container-low px-4 py-2 rounded-xl transition-colors">
+                Login
+              </Link>
+              <Link to="/auth?tab=register" className="bg-primary hover:bg-primary/90 font-label-md text-label-md text-white px-4 py-2 rounded-xl shadow-sm transition-all">
+                Criar Conta
+              </Link>
+            </div>
+          )}
         </div>
       </div>
-    </motion.nav>
-  );
-}
-
-function NavLink({ to, children, active, isDark }) {
-  return (
-    <Link 
-      to={to} 
-      className={cn(
-        "px-4 py-2 rounded-full text-sm font-medium transition-colors relative",
-        isDark 
-          ? (active ? "text-white bg-white/10" : "text-slate-400 hover:text-white hover:bg-white/5")
-          : (active ? "text-slate-900 bg-slate-100" : "text-slate-600 hover:text-slate-900 hover:bg-slate-50")
-      )}
-    >
-      {children}
-    </Link>
+    </header>
   );
 }
 
