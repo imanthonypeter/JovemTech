@@ -14,7 +14,7 @@ function DetalhesVaga() {
 
   useEffect(() => {
     // Simulando fetch da API ou usando o axios se o backend estiver rodando
-    axios.get(`http://localhost:5000/api/vagas/${id}`)
+    axios.get(`http://localhost:4000/api/vagas/${id}`)
       .then(res => {
         setVaga(res.data);
         setLoading(false);

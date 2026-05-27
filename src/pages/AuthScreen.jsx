@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 export default function AuthScreen() {
   const location = useLocation();
@@ -29,18 +30,24 @@ export default function AuthScreen() {
     setLoading(true);
     try {
       if (isLogin) {
-        const res = await axios.post('http://localhost:5000/api/auth/login', { email, senha });
+        const res = await axios.post('http://localhost:4000/api/auth/login', { email, senha });
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
         navigate('/dashboard');
       } else {
-        const res = await axios.post('http://localhost:5000/api/auth/register', { nome, email, senha, tipo });
+        const res = await axios.post('http://localhost:4000/api/auth/register', { nome, email, senha, tipo });
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
         navigate('/dashboard');
       }
     } catch (err) {
-      setErro(err.response?.data?.error || 'Ocorreu um erro. Tenta novamente.');
+      if (!err.response) {
+        setErro('Erro de ligação. O servidor local (porta 4000) parece estar desligado.');
+        toast.error('Erro de ligação ao servidor!');
+      } else {
+        setErro(err.response?.data?.error || 'Ocorreu um erro. Tenta novamente.');
+        toast.error(err.response?.data?.error || 'Falha na autenticação.');
+      }
     } finally {
       setLoading(false);
     }
@@ -184,7 +191,7 @@ export default function AuthScreen() {
         <button
           type="submit"
           disabled={loading}
-          className={`font-bold text-sm px-6 py-3.5 rounded-xl hover:scale-[1.02] duration-200 transition-all w-full mt-4 flex items-center justify-center gap-2 ${isLogin ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-on-surface text-surface shadow-lg'} disabled:opacity-50 disabled:hover:scale-100`}
+          className={`font-bold text-sm px-6 py-3.5 rounded-xl hover:scale-[1.02] duration-200 transition-all w-full mt-4 flex items-center justify-center gap-2 ${isLogin ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/30' : 'bg-on-surface text-surface shadow-lg'} disabled:opacity-50 disabled:hover:scale-100 focus:ring-2 focus:ring-blue-500 focus:outline-none`}
         >
           {loading ? 'A processar...' : isLogin ? 'Entrar' : 'Criar Minha Conta'}
           {!loading && <span className="material-symbols-outlined text-[18px]">arrow_forward</span>}

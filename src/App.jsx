@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Dashboard from './pages/Dashboard';
@@ -15,6 +17,7 @@ import Sobre from './pages/Sobre';
 import Contactos from './pages/Contactos';
 import Comunidade from './pages/Comunidade';
 import FAQ from './pages/FAQ';
+import NotFound from './pages/NotFound';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -52,7 +55,7 @@ function AppContent() {
           <Route path="/contactos" element={<Contactos />} />
           <Route path="/comunidade" element={<Comunidade />} />
           <Route path="/faq" element={<FAQ />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       
@@ -63,9 +66,12 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <AppContent />
+        <Toaster position="bottom-right" toastOptions={{ className: 'dark:bg-slate-800 dark:text-white' }} />
+      </Router>
+    </ErrorBoundary>
   );
 }
 

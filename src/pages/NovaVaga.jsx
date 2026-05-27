@@ -14,7 +14,7 @@ function NovaVaga() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/vagas', {
+      await axios.post('http://localhost:4000/api/vagas', {
         titulo, descricao, requisitos, empresaId: null
       });
       navigate('/vagas');
@@ -24,7 +24,7 @@ function NovaVaga() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="max-w-3xl mx-auto pt-8 px-4 w-full">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="max-w-3xl mx-auto pt-24 px-4 w-full">
       <div className="mb-8">
         <h2 className="font-display-lg text-headline-lg font-bold text-on-surface tracking-tight">Criar Nova Oportunidade</h2>
         <p className="font-body-lg text-body-lg text-on-surface-variant mt-xs">Preencha os detalhes para encontrar o talento ideal.</p>

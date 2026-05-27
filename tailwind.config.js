@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,22 +8,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        surface: '#faf8ff',
+        surface: 'var(--color-surface)',
         'surface-dim': '#d2d9f4',
         'surface-bright': '#faf8ff',
-        'surface-container-lowest': '#ffffff',
-        'surface-container-low': '#f2f3ff',
-        'surface-container': '#eaedff',
-        'surface-container-high': '#e2e7ff',
-        'surface-container-highest': '#dae2fd',
-        'on-surface': '#131b2e',
-        'on-surface-variant': '#434656',
+        'surface-container-lowest': 'var(--color-surface-container-lowest)',
+        'surface-container-low': 'var(--color-surface-container-low)',
+        'surface-container': 'var(--color-surface-container)',
+        'surface-container-high': 'var(--color-surface-container-high)',
+        'surface-container-highest': 'var(--color-surface-container-highest)',
+        'on-surface': 'var(--color-on-surface)',
+        'on-surface-variant': 'var(--color-on-surface-variant)',
         'inverse-surface': '#283044',
         'inverse-on-surface': '#eef0ff',
         outline: '#737688',
-        'outline-variant': '#c3c5d9',
+        'outline-variant': 'var(--color-outline-variant)',
         'surface-tint': '#004ced',
-        primary: '#003ec7',
+        primary: 'var(--color-primary)',
         'on-primary': '#ffffff',
         'primary-container': '#0052ff',
         'on-primary-container': '#dfe3ff',
@@ -51,9 +52,9 @@ export default {
         'tertiary-fixed-dim': '#c0c1ff',
         'on-tertiary-fixed': '#07006c',
         'on-tertiary-fixed-variant': '#2f2ebe',
-        background: '#faf8ff',
-        'on-background': '#131b2e',
-        'surface-variant': '#dae2fd',
+        background: 'var(--color-background)',
+        'on-background': 'var(--color-on-surface)',
+        'surface-variant': 'var(--color-surface-container-highest)',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
