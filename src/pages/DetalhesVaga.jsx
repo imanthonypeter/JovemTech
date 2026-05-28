@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { Building2, MapPin, DollarSign, Clock, Briefcase, ChevronLeft, Send, CheckCircle2 } from 'lucide-react';
+import { Building2, MapPin, DollarSign, Clock, Briefcase, ChevronLeft, Send, CheckCircle2, FileText } from 'lucide-react';
 
 function DetalhesVaga() {
   const { id } = useParams();

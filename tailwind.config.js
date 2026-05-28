@@ -57,6 +57,8 @@ export default {
         'surface-variant': 'var(--color-surface-container-highest)',
       },
       fontFamily: {
+        heading: ['Inter', 'system-ui', 'sans-serif'],
+        body: ['Inter', 'system-ui', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
         geist: ['Geist', 'monospace'],
         'headline-md': ['Inter', 'system-ui', 'sans-serif'],
@@ -116,6 +118,9 @@ export default {
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      },
+      borderRadius: {
+        DEFAULT: '9999px',
       }
     },
   },
