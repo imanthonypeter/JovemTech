@@ -33,10 +33,12 @@ function AppContent() {
   const isAuthPage = location.pathname === '/auth';
   const isOnboardingPage = location.pathname === '/onboarding';
   
+  const isLandingPage = location.pathname === '/';
+  
   const hideNavigation = isAuthPage || isOnboardingPage;
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground overflow-x-hidden">
+    <div className={`flex flex-col min-h-screen text-foreground overflow-x-hidden ${isLandingPage ? 'bg-transparent' : 'bg-background'}`}>
       {!hideNavigation && <Navbar />}
       
       <main className="flex-grow">

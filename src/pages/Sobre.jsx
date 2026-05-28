@@ -182,8 +182,8 @@ export default function Sobre() {
                     <ProtectedSocialLink
                       url={links.linkedin}
                       label="LinkedIn"
-                      iconHoverClass="group-hover/btn:text-[#0a66c2]"
-                      borderHoverClass="hover:border-[#0a66c2]/50"
+                      iconHoverClass="group-hover/btn:!text-[#0a66c2]"
+                      borderHoverClass="hover:!border-[#0a66c2]/50"
                       bgHoverClass="hover:bg-[#0a66c2]/10"
                       icon={
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -194,13 +194,44 @@ export default function Sobre() {
                       }
                     />
                     <ProtectedSocialLink
+                      url={links.instagram}
+                      label="Instagram"
+                      iconHoverClass=""
+                      borderHoverClass="hover:!border-[#E1306C]/50"
+                      bgHoverClass="hover:bg-[#E1306C]/10"
+                      icon={
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-all duration-300 group-hover/btn:stroke-[url(#ig-grad)]!">
+                          <defs>
+                            <linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+                              <stop offset="0%" stopColor="#f09433" />
+                              <stop offset="25%" stopColor="#e6683c" />
+                              <stop offset="50%" stopColor="#dc2743" />
+                              <stop offset="75%" stopColor="#cc2366" />
+                              <stop offset="100%" stopColor="#bc1888" />
+                            </linearGradient>
+                          </defs>
+                          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                      }
+                    />
+                    <ProtectedSocialLink
                       url={links.email}
                       label="Email"
-                      iconHoverClass="group-hover/btn:text-[#EA4335]"
-                      borderHoverClass="hover:border-[#EA4335]/50"
+                      iconHoverClass=""
+                      borderHoverClass="hover:!border-[#EA4335]/50"
                       bgHoverClass="hover:bg-[#EA4335]/10"
                       icon={
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-all duration-300 group-hover/btn:stroke-[url(#gmail-grad)]!">
+                          <defs>
+                            <linearGradient id="gmail-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                              <stop offset="0%" stopColor="#4285F4" />
+                              <stop offset="33%" stopColor="#EA4335" />
+                              <stop offset="66%" stopColor="#FBBC05" />
+                              <stop offset="100%" stopColor="#34A853" />
+                            </linearGradient>
+                          </defs>
                           <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                           <polyline points="22,6 12,13 2,6"></polyline>
                         </svg>

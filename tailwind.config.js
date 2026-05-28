@@ -59,7 +59,7 @@ export default {
       fontFamily: {
         heading: ['Inter', 'system-ui', 'sans-serif'],
         body: ['Inter', 'system-ui', 'sans-serif'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['"Helvetica Regular"', 'system-ui', 'sans-serif'],
         geist: ['Geist', 'monospace'],
         'headline-md': ['Inter', 'system-ui', 'sans-serif'],
         'headline-lg': ['Inter', 'system-ui', 'sans-serif'],

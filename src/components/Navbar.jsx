@@ -18,7 +18,7 @@ function Navbar() {
   } catch(e) {}
 
   const navLinks = [
-    { name: 'Sobre Nós', path: '/sobre' },
+    { name: 'About', path: '/sobre' },
     { name: 'Contactos', path: '/contactos' },
     { name: 'Comunidade', path: '/comunidade' },
     { name: 'FAQ', path: '/faq' },
